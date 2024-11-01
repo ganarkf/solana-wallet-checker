@@ -7,7 +7,6 @@ from datetime import datetime, timedelta
 from tabulate import tabulate
 import time
 
-# Configuration
 API_URL = 'https://gmgn.ai/defi/quotation/v1/smartmoney/sol/walletNew/'
 
 def setup_driver():
@@ -17,7 +16,7 @@ def setup_driver():
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-setuid-sandbox")
     
-    # Explicitly set the Chrome version (update this to match your Chrome version)
+    # MATCH YOUR CHROME VERSION
     uc.TARGET_VERSION = 130
 
     driver = uc.Chrome(options=options, version_main=130)
@@ -35,14 +34,12 @@ def fetch_wallet_data(driver, wallet_address, period):
     url = f'{API_URL}{wallet_address}?period={period}'
     try:
         driver.get(url)
-        time.sleep(2)  # Wait for 5 seconds to allow the page to load
+        time.sleep(2)
         
-        # Wait for the pre tag to be present
         WebDriverWait(driver, 20).until(
             EC.presence_of_element_located((By.TAG_NAME, "pre"))
         )
         
-        # Get the page source and find the pre tag
         page_source = driver.page_source
         start_index = page_source.find("<pre>") + 5
         end_index = page_source.find("</pre>")
