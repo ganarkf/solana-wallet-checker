@@ -2,5 +2,4 @@ setuptools
 undetected_chromedriver
 selenium
 tabulate
-termcolor
 requests
