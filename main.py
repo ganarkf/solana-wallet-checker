@@ -16,7 +16,6 @@ def setup_driver():
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-setuid-sandbox")
     
-    # MATCH YOUR CHROME VERSION
     uc.TARGET_VERSION = 130
 
     driver = uc.Chrome(options=options, version_main=130)
@@ -24,7 +23,7 @@ def setup_driver():
 
 def get_period():
     print('Welcome to Solana Wallet Checker!')
-    period = input('How many days do you want the winrate? 7d/30d\nExample: 7d\n> ').strip()
+    period = input('Select period : 7d/30d\n> ').strip()
     if period not in ['7d', '30d']:
         print("Invalid input. Please enter '7d' or '30d'.")
         exit()
@@ -81,17 +80,27 @@ def main():
     period = get_period()
     driver = setup_driver()
     three_days_ago = datetime.now() - timedelta(days=3)
-    output_file = '30d_results.txt' if period == '30d' else '7d_results.txt'
+    seven_days_ago = datetime.now() - timedelta(days=7)
+    output_txt = '30d_results.txt' if period == '30d' else '7d_results.txt'
+    output_json = '30d_results.json' if period == '30d' else '7d_results.json'
+    results = []
 
     try:
         with open('list.txt', 'r') as file:
             wallet_addresses = file.read().strip().split('\n')
-        
-        results = []
         for wallet_address in wallet_addresses:
             if wallet_address.strip():
                 data = fetch_wallet_data(driver, wallet_address, period)
                 result = process_data(data, wallet_address, period)
+                
+                if datetime.fromtimestamp(result['Last Active Timestamp Raw']) < seven_days_ago:
+                    print(f"🔴 Wallet has been inactive since 7 days ago ({wallet_address}) 🔴")
+                
+                if float(result['Winrate'].replace('%', '')) < 25 :
+                    print(f"🔴 Wallet has low winrate ({wallet_address}) : {result['Winrate']} 🔴")
+                
+                if float(result['AVG PnL'].replace('%', '')) < 25 :
+                    print(f"🔴 Wallet has low PnL ({wallet_address}) : {result['AVG PnL']} 🔴")
                 
                 if (
                     result 
@@ -100,16 +109,18 @@ def main():
                     and datetime.fromtimestamp(result['Last Active Timestamp Raw']) > three_days_ago
                     ):
                     results.append(result)
-                    selected_fields = {
+                    print_fields = {
                         'Wallet Address': result['Wallet Address'],
                         'Winrate': result['Winrate'],
                         'AVG PnL': result['AVG PnL']
                     }
-                    print(tabulate([selected_fields], headers="keys", tablefmt="grid"))
+                    print(tabulate([print_fields], headers="keys", tablefmt="grid"))
                     
-                    with open(output_file, 'a') as file:
+                    with open(output_txt, 'a') as file:
                         result_to_save = {k: v for k, v in result.items() if k != 'Last Active Timestamp Raw'}
                         file.write(json.dumps(result_to_save, indent=4) + '\n')
+        with open(output_json, 'a') as json_file:
+            json.dump(results, json_file)
 
     except FileNotFoundError:
         print("The file 'list.txt' was not found.")
