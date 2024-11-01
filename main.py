@@ -97,7 +97,7 @@ def main():
                     print(f"🔴 Wallet has been inactive since 7 days ago ({wallet_address}) 🔴")
                 
                 if float(result['Winrate'].replace('%', '')) < 25 :
-                    print(f"🔴 Wallet has low winrate ({wallet_address}) : {result['Winrate']} 🔴")
+                    print(f"🔴 Wallet has low Winrate ({wallet_address}) : {result['Winrate']} 🔴")
                 
                 if float(result['AVG PnL'].replace('%', '')) < 25 :
                     print(f"🔴 Wallet has low PnL ({wallet_address}) : {result['AVG PnL']} 🔴")
