@@ -1,11 +1,11 @@
 import undetected_chromedriver as uc
+import json
+import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import json
 from datetime import datetime, timedelta
 from tabulate import tabulate
-import time
 
 API_URL = 'https://gmgn.ai/defi/quotation/v1/smartmoney/sol/walletNew/'
 
@@ -94,13 +94,13 @@ def main():
                 result = process_data(data, wallet_address, period)
                 
                 if datetime.fromtimestamp(result['Last Active Timestamp Raw']) < seven_days_ago:
-                    print(f"🔴 Wallet has been inactive since 7 days ago ({wallet_address}) 🔴")
+                    print(f"❌ Wallet has been inactive since 7 days ago ({wallet_address}) ❌")
                 
                 if float(result['Winrate'].replace('%', '')) < 25 :
                     print(f"🔴 Wallet has low Winrate ({wallet_address}) : {result['Winrate']} 🔴")
                 
                 if float(result['AVG PnL'].replace('%', '')) < 25 :
-                    print(f"🔴 Wallet has low PnL ({wallet_address}) : {result['AVG PnL']} 🔴")
+                    print(f"🟠 Wallet has low PnL ({wallet_address}) : {result['AVG PnL']} 🟠")
                 
                 if (
                     result 
