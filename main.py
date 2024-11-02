@@ -1,11 +1,11 @@
 import undetected_chromedriver as uc
-import json
-import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import json
 from datetime import datetime, timedelta
 from tabulate import tabulate
+import time
 
 API_URL = 'https://gmgn.ai/defi/quotation/v1/smartmoney/sol/walletNew/'
 
@@ -58,18 +58,20 @@ def process_data(data, wallet_address, period):
             winrate = data['data']['winrate'] if data['data']['winrate'] is not None else 0
             realized_profit_key = 'realized_profit_30d' if period == '30d' else 'realized_profit_7d'
             realized_profit = data['data'][realized_profit_key] if data['data'][realized_profit_key] is not None else 0
+            unrealized_profit = data['data']['unrealized_profit'] if data['data']['unrealized_profit'] is not None else 0
             last_active_timestamp = data['data'].get('last_active_timestamp', 0)
             last_pnl = pnl * 100
             last_winrate = winrate * 100
 
             result = {
                 'Wallet Address': wallet_address,
-                'SOL Balance': f'{float(sol_balance):.2f}',
                 'Winrate': f'{round(last_winrate, 2)}%',
                 'AVG PnL': f'{round(last_pnl, 2)}%',
-                'Realized Profit': f'{realized_profit}$',
+                'Realized Profit': f'{int(realized_profit)}$',
+                'Unrealized Profit': f'{int(unrealized_profit)}$',
+                'SOL Balance': f'{float(sol_balance):.2f}',
                 'Last Active Timestamp': datetime.fromtimestamp(last_active_timestamp).strftime('%d-%m-%Y %H:%M:%S'),
-                'Last Active Timestamp Raw': last_active_timestamp
+                'SolScan': f'https://solscan.io/account/{wallet_address}',
             }
             return result
         except KeyError as e:
@@ -93,7 +95,7 @@ def main():
                 data = fetch_wallet_data(driver, wallet_address, period)
                 result = process_data(data, wallet_address, period)
                 
-                if datetime.fromtimestamp(result['Last Active Timestamp Raw']) < seven_days_ago:
+                if datetime.fromtimestamp(data['data'].get('last_active_timestamp', 0)) < seven_days_ago:
                     print(f"❌ Wallet has been inactive since 7 days ago ({wallet_address}) ❌")
                 
                 if float(result['Winrate'].replace('%', '')) < 25 :
@@ -106,7 +108,7 @@ def main():
                     result 
                     and float(result['Winrate'].replace('%', '')) > 50 
                     and float(result['AVG PnL'].replace('%', '')) > 50
-                    and datetime.fromtimestamp(result['Last Active Timestamp Raw']) > three_days_ago
+                    and datetime.fromtimestamp(data['data'].get('last_active_timestamp', 0)) > three_days_ago
                     ):
                     results.append(result)
                     print_fields = {
@@ -117,7 +119,7 @@ def main():
                     print(tabulate([print_fields], headers="keys", tablefmt="grid"))
                     
                     with open(output_txt, 'a') as file:
-                        result_to_save = {k: v for k, v in result.items() if k != 'Last Active Timestamp Raw'}
+                        result_to_save = {k: v for k, v in result.items()}
                         file.write(json.dumps(result_to_save, indent=4) + '\n')
         with open(output_json, 'a') as json_file:
             json.dump(results, json_file)
