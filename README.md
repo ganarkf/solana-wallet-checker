@@ -32,3 +32,7 @@
    ```bash
    pip install -r requirements.txt
    ```
+
+## Note
+
+You can explore the response from the GMGN API to process the wallet further
