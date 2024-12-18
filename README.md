@@ -3,7 +3,7 @@
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/gnrkfz/solana-wallet-checker.git
+   git clone https://github.com/ganarkf/solana-wallet-checker.git
    ```
    ```bash
    cd solana-wallet-checker
