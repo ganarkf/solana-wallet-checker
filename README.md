@@ -18,7 +18,7 @@
 
    Ensure your Chrome version matches the version specified in the script. Update the `TARGET_VERSION` in `main.py` if needed.
 
-6. **Create and Activate Virtual Environment**
+5. **Create and Activate Virtual Environment**
 
    ```bash
    python -m venv .venv
@@ -27,7 +27,7 @@
    .venv\Scripts\activate
    ```
 
-8. **Install Dependencies**
+6. **Install Dependencies**
 
    ```bash
    pip install -r requirements.txt
