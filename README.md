@@ -36,3 +36,5 @@
 ## Note
 
 You can explore the response from the GMGN API to process the wallet further
+
+Check my "Get DS Top Traders List" Repo ➤ https://github.com/ganarkf/ds-top-traders
