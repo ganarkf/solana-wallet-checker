@@ -38,6 +38,6 @@
 You can explore the response from the GMGN API to process the wallet further
 
 Also check my other repo : 
-<br />["Solana Wallet Generator"](https://github.com/ganarkf/sol-wallet-generator)
-<br />["DS Top Traders"](https://github.com/ganarkf/ds-top-traders)
+<br />● [Solana Wallet Generator](https://github.com/ganarkf/sol-wallet-generator)
+<br />● [DS Top Traders](https://github.com/ganarkf/ds-top-traders)
 
