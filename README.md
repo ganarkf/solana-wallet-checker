@@ -37,4 +37,7 @@
 
 You can explore the response from the GMGN API to process the wallet further
 
-Check my ["Get DS Top Traders List"](https://github.com/ganarkf/ds-top-traders) Repo too
+Also check my other repo : 
+<br />["Solana Wallet Generator"](https://github.com/ganarkf/sol-wallet-generator)
+<br />["DS Top Traders"](https://github.com/ganarkf/ds-top-traders)
+
